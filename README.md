@@ -1,3 +1,3 @@
 # minishell
 Creating our own shell based on the functionality of bash
-in co-operation with @RossoRobot
+in co-operation with [RossoRobot](https://github.com/RossoRobot/minishell)
