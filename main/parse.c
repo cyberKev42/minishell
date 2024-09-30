@@ -1,0 +1,128 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mvolgger <mvolgger@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/19 12:59:07 by kbrauer           #+#    #+#             */
+/*   Updated: 2024/07/28 19:25:44 by mvolgger         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "./../include/minishell.h"
+
+void	mal_list(t_shell *shell)
+{
+	shell->lists = (t_list **) malloc (sizeof(t_list *) * (shell->n_pipes + 2));
+	if (!shell->lists)
+		free_exit(shell, 1);
+	shell->lists[shell->n_pipes + 1] = NULL;
+}
+
+void	create_tokens(char *input, t_shell *shell)
+{
+	int		i;
+	int		k;
+	int		flag;
+	int		pipes;
+
+	mal_list(set_data_return_shell(shell, &i, &k, &pipes));
+	while (pipes + 1)
+	{
+		input = skip_gap(input);
+		shell->lists[i] = ft_lstnew(input, &k, shell);
+		while (*input)
+		{
+			while (k-- != 0)
+				input++;
+			flag = set_input(&input);
+			if (*input == 0)
+				break ;
+			if (*input == '|')
+				input += while_pipe(input, &flag);
+			if (flag)
+				break ;
+			ft_lstadd_back(shell->lists[i], ft_lstnew(input, &k, shell));
+		}
+		increase_i_decrease_pipes(&i, &pipes);
+	}
+}
+
+void	print_tokens(t_shell *shell)
+{
+	t_list	*ptr;
+	int		i;
+
+	i = 0;
+	while (shell->lists[i])
+	{
+		ptr = shell->lists[i];
+		while (ptr)
+		{
+			printf("content: %s\n", ptr->content);
+			printf(" type:  %d\n", ptr->type);
+			ptr = ptr->next;
+		}
+		i++;
+	}
+	ptr = NULL;
+}
+
+int	check_input(char *str, t_shell *shell)
+{
+	int	i;
+	int	flag1;
+	int	flag2;
+	int	flagflag;
+
+	set_data(&i, &flag1, &flag2, shell);
+	flagflag = 0;
+	if (check_pipe_red(shell, str))
+		return (1);
+	while (str[i])
+	{
+		pipe_counter(shell, str[i], flag1, flag2);
+		while (str[i] == '|')
+		{
+			i++;
+			if (pipe_error(shell, str, i))
+				return (1);
+		}
+		if (!str[i])
+			break ;
+		i = i + increase_flag(str[i], &flag1, &flag2, &flagflag);
+	}
+	if (flag1 % 2 || flag2 % 2)
+		return (check_input_helper(shell), 1);
+	return (0);
+}
+
+int	parse(char *cmd, t_shell *shell)
+{
+	init_values(shell);
+	if (check_input(cmd, shell))
+		return (1);
+	create_tokens(cmd, shell);
+	if (!shell->lists)
+		return (1);
+	define_type(shell);
+	set_here_del_type(shell);
+	if (expansion(shell))
+		free_exit(shell, 1);
+	if (handle_empty_tokens(shell))
+		return (1);
+	unquote(shell);
+	if (start_w_pipe(shell, shell->lists[0]->content))
+	{
+		ft_putstr_fd("minishell: ", 2);
+		write(2, shell->lists[0]->content, ft_strlen(shell->lists[0]->content));
+		ft_putstr_fd(": command not found\n", 2);
+		set_return_value(shell, 127);
+		return (free_parse(shell), 1);
+	}
+	if (start_heredoc(shell))
+		return (free_parse(shell), 1);
+	trim_hedoc(shell);
+	return (0);
+}
