@@ -1,7 +1,7 @@
 <div align="center">
 
 ```
-                 _       _          _ _ 
+            _       _     _          _ _ 
   _ __ ___ (_)_ __ (_)___| |__   ___| | |
  | '_ ` _ \| | '_ \| / __| '_ \ / _ \ | |
  | | | | | | | | | | \__ \ | | |  __/ | |
@@ -104,7 +104,7 @@ minishell/
 
 ```bash
 # Clone the repository
-git clone https://github.com/RossoRobot/minishell.git
+git clone https://github.com/cyberKev42/minishell.git
 cd minishell
 
 # Build
@@ -171,8 +171,7 @@ minishell$ ls -la | sort -k5 -n | tail -5
 
 | Kevin Brauer | Matthias Volgger |
 |:---:|:---:|
-| [kbrauer@student.42.fr](mailto:kbrauer@student.42.fr) | [mvolgger@student.42.fr](mailto:mvolgger@student.42.fr) |
-| 42 Vienna | 42 Vienna |
+| [github.com/cyberKev42](https://github.com/cyberKev42) | [github.com/RossoRobot](https://github.com/RossoRobot) |
 
 </div>
 
