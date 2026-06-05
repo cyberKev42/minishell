@@ -169,7 +169,7 @@ minishell$ ls -la | sort -k5 -n | tail -5
 
 <div align="center">
 
-| Kevin Brauer | Matthias Volgger |
+| Kevin Bräuer | Matthias Volgger |
 |:---:|:---:|
 | [github.com/cyberKev42](https://github.com/cyberKev42) | [github.com/RossoRobot](https://github.com/RossoRobot) |
 
